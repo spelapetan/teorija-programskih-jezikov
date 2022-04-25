@@ -152,38 +152,20 @@ data _↝_ : {A : Ty} → ∅ ⊢c A → ∅ ⊢c A → Set where
         SND ⟨ M , N ⟩ ↝ (RETURN N)
 
 
--- data progresses : {A : Ty} → ∅ ⊢ A → Set where
---     is-value : {A : Ty} {M : ∅ ⊢ A} →
---         value M →
---         ------------
---         progresses M
---     steps : {A : Ty} {M M' : ∅ ⊢ A} →
---         M ↝ M' →
---         ------------
---         progresses M
+data progresses : {A : Ty} → ∅ ⊢c A → Set where
+    is-value : {A : Ty} {V : ∅ ⊢v A} →
+        ---------------------
+        progresses (RETURN V)
+    steps : {A : Ty} {M M' : ∅ ⊢c A} →
+        M ↝ M' →
+        ------------
+        progresses M
 
--- progress : {A : Ty} → (M : ∅ ⊢ A) → progresses M
+progress : {A : Ty} → (M : ∅ ⊢c A) → progresses M
 
--- progress TRUE = is-value value-TRUE
--- progress FALSE = is-value value-FALSE
--- progress (IF M THEN N₁ ELSE N₂) with progress M
--- ... | is-value value-TRUE = steps IF-TRUE
--- ... | is-value value-FALSE = steps IF-FALSE
--- ... | steps M↝M' = steps (IF-STEP M↝M')
--- progress (M ∙ N) with progress M
--- ... | steps M↝M' = steps (APP-STEP1 M↝M')
--- ... | is-value value-LAMBDA with progress N
--- ...     | is-value V = steps (APP-BETA V)
--- ...     | steps N↝N' = steps (APP-STEP2 value-LAMBDA N↝N')
--- progress (ƛ M) = is-value value-LAMBDA
--- progress ⟨ M , N ⟩ with progress M
--- ... | steps M↝M' = steps (PAIR-STEP1 M↝M')
--- ... | is-value V with progress N
--- ...     | is-value W = is-value (value-PAIR V W)
--- ...     | steps N↝N' = steps (PAIR-STEP2 V N↝N')
--- progress (FST M) with progress M
--- ... | is-value (value-PAIR V W) = steps (FST-BETA V W)
--- ... | steps M↝M' = steps (FST-STEP M↝M')
--- progress (SND M) with progress M
--- ... | is-value (value-PAIR V W) = steps (SND-BETA V W)
--- ... | steps M↝M' = steps (SND-STEP M↝M')
+progress (IF TRUE THEN M ELSE M₁) = steps IF-TRUE
+progress (IF FALSE THEN M ELSE M₁) = steps IF-FALSE
+progress (ƛ x ∙ x₁) = steps APP-BETA
+progress (FST ⟨ x , x₁ ⟩) = steps FST-BETA
+progress (SND ⟨ x , x₁ ⟩) = steps SND-BETA
+progress (RETURN x) = is-value
