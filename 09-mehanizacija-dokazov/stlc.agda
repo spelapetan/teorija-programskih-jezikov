@@ -43,21 +43,56 @@ data _⊢_ : Ctx → Ty → Set where
         -----------
         Γ ⊢ (A ⇒ B)
 
-data _⇉_ : Ctx → Ctx → Set where
-    [] : {Δ : Ctx} → ∅ ⇉ Δ
-    _,_ : {Γ Δ : Ctx} (σ : Γ ⇉ Δ) {A : Ty} → Δ ⊢ A → (Γ , A) ⇉ Δ
+ext : {Γ Δ : Ctx}
+  → ({A : Ty} → A ∈ Γ → A ∈ Δ)
+    --------------------------------------
+  → {A B : Ty} → A ∈ (Γ , B) → A ∈ (Δ , B)
+ext σ Z = Z
+ext σ (S x) = S (σ x)
 
-lookup : {Γ Δ : Ctx} {A : Ty} → Γ ⇉ Δ → A ∈ Γ → Δ ⊢ A
-lookup (σ , M) Z = M
-lookup (σ , _) (S x) = lookup σ x
+rename : {Γ Δ : Ctx}
+  → ({A : Ty} → A ∈ Γ → A ∈ Δ)
+    -------------------------
+  → {A : Ty} → Γ ⊢ A → Δ ⊢ A
+rename σ (VAR x) = VAR (σ x)
+rename σ TRUE = TRUE
+rename σ FALSE = TRUE
+rename σ (IF M THEN N₁ ELSE N₂) = 
+    IF (rename σ M) THEN (rename σ N₁) ELSE (rename σ N₂)
+rename σ (M ∙ N) = rename σ M ∙ rename σ N
+rename σ (ƛ M) = ƛ (rename (ext σ) M)
 
-subst : {Γ Δ : Ctx} {A : Ty} → Γ ⇉ Δ → Γ ⊢ A → Δ ⊢ A
-subst σ (VAR x) = lookup σ x
+exts : {Γ Δ : Ctx}
+  → ({A : Ty} → A ∈ Γ → Δ ⊢ A)
+    ---------------------------------------
+  → {A B : Ty} → A ∈ (Γ , B) → (Δ , B) ⊢ A
+exts σ Z = VAR Z
+exts σ (S x) = rename S (σ x)
+
+subst : {Γ Δ : Ctx}
+  → ({A : Ty} → A ∈ Γ → Δ ⊢ A)
+    -------------------------
+  → {A : Ty} → Γ ⊢ A → Δ ⊢ A
+subst σ (VAR x) = σ x
 subst σ TRUE = TRUE
-subst σ FALSE = TRUE
-subst σ (IF M THEN M₁ ELSE M₂) = IF (subst σ M) THEN (subst σ M₁) ELSE (subst σ M₂)
-subst σ (M ∙ N) = (subst σ M) ∙ subst σ N
-subst σ (ƛ {A = A} M) = ƛ (subst {!   !} M)
+subst σ FALSE = FALSE
+subst σ (IF M THEN N₁ ELSE N₂) =
+    IF (subst σ M) THEN (subst σ N₁) ELSE (subst σ N₂)
+subst σ (M ∙ N) = subst σ M ∙ subst σ N
+subst σ (ƛ M) = ƛ (subst (exts σ) M)
+
+_[_] : {Γ : Ctx} {A B : Ty}
+  → (Γ , B) ⊢ A
+  → Γ ⊢ B
+    -----
+  → Γ ⊢ A
+_[_] {Γ} {B = B} N M = subst σ N
+  where
+  σ : ∀ {A : Ty} → A ∈ (Γ , B) → Γ ⊢ A
+  σ Z = M
+  σ (S x) = VAR x
+
+
 
 data value : {Γ : Ctx} {A : Ty} → Γ ⊢ A → Set where
     value-TRUE : {Γ : Ctx} →
@@ -93,22 +128,24 @@ data _↝_ : {A : Ty} → ∅ ⊢ A → ∅ ⊢ A → Set where
     APP-BETA : {A B : Ty} {M : (∅ , A) ⊢ B} {N : ∅ ⊢ A} →
         value N →
         ------------------------------------------------
-        ((ƛ M) ∙ N) ↝ subst ([] , N) M
+        ((ƛ M) ∙ N) ↝ ( M [ N ])
 
-data Progress : {A : Ty} → ∅ ⊢ A → Set where
+
+data progresses : {A : Ty} → ∅ ⊢ A → Set where
     is-value : {A : Ty} {M : ∅ ⊢ A} →
         value M →
-        ----------
-        Progress M
+        ------------
+        progresses M
     steps : {A : Ty} {M M' : ∅ ⊢ A} →
         M ↝ M' →
-        ----------
-        Progress M
+        ------------
+        progresses M
 
-progress : {A : Ty} → (M : ∅ ⊢ A) → Progress M
+progress : {A : Ty} → (M : ∅ ⊢ A) → progresses M
+
 progress TRUE = is-value value-TRUE
 progress FALSE = is-value value-FALSE
-progress (IF M THEN M₁ ELSE M₂) with progress M
+progress (IF M THEN N₁ ELSE N₂) with progress M
 ... | is-value value-TRUE = steps IF-TRUE
 ... | is-value value-FALSE = steps IF-FALSE
 ... | steps M↝M' = steps (IF-STEP M↝M')
