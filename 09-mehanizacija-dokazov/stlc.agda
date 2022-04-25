@@ -60,34 +60,34 @@ data _⊢_ : Ctx → Ty → Set where
         -----
         Γ ⊢ B
 
-ext : {Γ Δ : Ctx}
+extend-renaming : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → A ∈ Δ)
     --------------------------------------
   → {A B : Ty} → A ∈ (Γ , B) → A ∈ (Δ , B)
-ext σ Z = Z
-ext σ (S x) = S (σ x)
+extend-renaming ρ Z = Z
+extend-renaming ρ (S x) = S (ρ x)
 
 rename : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → A ∈ Δ)
     -------------------------
   → {A : Ty} → Γ ⊢ A → Δ ⊢ A
-rename σ (VAR x) = VAR (σ x)
-rename σ TRUE = TRUE
-rename σ FALSE = TRUE
-rename σ (IF M THEN N₁ ELSE N₂) = 
-    IF (rename σ M) THEN (rename σ N₁) ELSE (rename σ N₂)
-rename σ (M ∙ N) = rename σ M ∙ rename σ N
-rename σ (ƛ M) = ƛ (rename (ext σ) M)
-rename σ ⟨ M , N ⟩ = ⟨ rename σ M , rename σ N ⟩
-rename σ (FST M) = FST (rename σ M)
-rename σ (SND M) = SND (rename σ M)
+rename ρ (VAR x) = VAR (ρ x)
+rename ρ TRUE = TRUE
+rename ρ FALSE = TRUE
+rename ρ (IF M THEN N₁ ELSE N₂) = 
+    IF (rename ρ M) THEN (rename ρ N₁) ELSE (rename ρ N₂)
+rename ρ (M ∙ N) = rename ρ M ∙ rename ρ N
+rename ρ (ƛ M) = ƛ (rename (extend-renaming ρ) M)
+rename ρ ⟨ M , N ⟩ = ⟨ rename ρ M , rename ρ N ⟩
+rename ρ (FST M) = FST (rename ρ M)
+rename ρ (SND M) = SND (rename ρ M)
 
-exts : {Γ Δ : Ctx}
+extend-subst : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → Δ ⊢ A)
     ---------------------------------------
   → {A B : Ty} → A ∈ (Γ , B) → (Δ , B) ⊢ A
-exts σ Z = VAR Z
-exts σ (S x) = rename S (σ x)
+extend-subst σ Z = VAR Z
+extend-subst σ (S x) = rename S (σ x)
 
 subst : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → Δ ⊢ A)
@@ -99,7 +99,7 @@ subst σ FALSE = FALSE
 subst σ (IF M THEN N₁ ELSE N₂) =
     IF (subst σ M) THEN (subst σ N₁) ELSE (subst σ N₂)
 subst σ (M ∙ N) = subst σ M ∙ subst σ N
-subst σ (ƛ M) = ƛ (subst (exts σ) M)
+subst σ (ƛ M) = ƛ (subst (extend-subst σ) M)
 subst σ ⟨ M , N ⟩ = ⟨ subst σ M , subst σ N ⟩
 subst σ (FST M) = FST (subst σ M)
 subst σ (SND M) = SND (subst σ M)

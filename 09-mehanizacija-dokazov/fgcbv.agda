@@ -68,12 +68,12 @@ mutual
             ------
             Γ ⊢c A
 
-ext : {Γ Δ : Ctx}
+extend-renaming : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → A ∈ Δ)
     --------------------------------------
   → {A B : Ty} → A ∈ (Γ , B) → A ∈ (Δ , B)
-ext σ Z = Z
-ext σ (S x) = S (σ x)
+extend-renaming ρ Z = Z
+extend-renaming ρ (S x) = S (ρ x)
 
 rename-v : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → A ∈ Δ)
@@ -83,24 +83,24 @@ rename-c : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → A ∈ Δ)
     ---------------------------
   → {A : Ty} → Γ ⊢c A → Δ ⊢c A
-rename-v σ (VAR x) = VAR (σ x)
-rename-v σ TRUE = TRUE
-rename-v σ FALSE = TRUE
-rename-v σ (ƛ M) = ƛ (rename-c (ext σ) M)
-rename-v σ ⟨ M , N ⟩ = ⟨ rename-v σ M , rename-v σ N ⟩
-rename-c σ (IF M THEN N₁ ELSE N₂) = 
-    IF (rename-v σ M) THEN (rename-c σ N₁) ELSE (rename-c σ N₂)
-rename-c σ (M ∙ N) = rename-v σ M ∙ rename-v σ N
-rename-c σ (FST M) = FST (rename-v σ M)
-rename-c σ (SND M) = SND (rename-v σ M)
-rename-c σ (RETURN V) = RETURN (rename-v σ V)
+rename-v ρ (VAR x) = VAR (ρ x)
+rename-v ρ TRUE = TRUE
+rename-v ρ FALSE = TRUE
+rename-v ρ (ƛ M) = ƛ (rename-c (extend-renaming ρ) M)
+rename-v ρ ⟨ V , W ⟩ = ⟨ rename-v ρ V , rename-v ρ W ⟩
+rename-c ρ (IF V THEN M₁ ELSE M₂) = 
+    IF (rename-v ρ V) THEN (rename-c ρ M₁) ELSE (rename-c ρ M₂)
+rename-c ρ (V ∙ W) = rename-v ρ V ∙ rename-v ρ W
+rename-c ρ (FST V) = FST (rename-v ρ V)
+rename-c ρ (SND V) = SND (rename-v ρ V)
+rename-c ρ (RETURN V) = RETURN (rename-v ρ V)
 
-exts : {Γ Δ : Ctx}
+extend-subst : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → Δ ⊢v A)
     ---------------------------------------
   → {A B : Ty} → A ∈ (Γ , B) → (Δ , B) ⊢v A
-exts σ Z = VAR Z
-exts σ (S x) = rename-v S (σ x)
+extend-subst σ Z = VAR Z
+extend-subst σ (S x) = rename-v S (σ x)
 
 subst-v : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → Δ ⊢v A)
@@ -113,13 +113,13 @@ subst-c : {Γ Δ : Ctx}
 subst-v σ (VAR x) = σ x
 subst-v σ TRUE = TRUE
 subst-v σ FALSE = TRUE
-subst-v σ (ƛ M) = ƛ (subst-c (exts σ) M)
-subst-v σ ⟨ M , N ⟩ = ⟨ subst-v σ M , subst-v σ N ⟩
-subst-c σ (IF M THEN N₁ ELSE N₂) = 
-    IF (subst-v σ M) THEN (subst-c σ N₁) ELSE (subst-c σ N₂)
-subst-c σ (M ∙ N) = subst-v σ M ∙ subst-v σ N
-subst-c σ (FST M) = FST (subst-v σ M)
-subst-c σ (SND M) = SND (subst-v σ M)
+subst-v σ (ƛ M) = ƛ (subst-c (extend-subst σ) M)
+subst-v σ ⟨ V , W ⟩ = ⟨ subst-v σ V , subst-v σ W ⟩
+subst-c σ (IF V THEN M₁ ELSE M₂) = 
+    IF (subst-v σ V) THEN (subst-c σ M₁) ELSE (subst-c σ M₂)
+subst-c σ (V ∙ W) = subst-v σ V ∙ subst-v σ W
+subst-c σ (FST V) = FST (subst-v σ V)
+subst-c σ (SND V) = SND (subst-v σ V)
 subst-c σ (RETURN V) = RETURN (subst-v σ V)
 
 _[_] : {Γ : Ctx} {A B : Ty}
@@ -127,10 +127,10 @@ _[_] : {Γ : Ctx} {A B : Ty}
   → Γ ⊢v B
     -----
   → Γ ⊢c A
-_[_] {Γ} {B = B} N M = subst-c σ N
+_[_] {Γ} {B = B} M V = subst-c σ M
   where
   σ : ∀ {A : Ty} → A ∈ (Γ , B) → Γ ⊢v A
-  σ Z = M
+  σ Z = V
   σ (S x) = VAR x
 
 
@@ -141,15 +141,15 @@ data _↝_ : {A : Ty} → ∅ ⊢c A → ∅ ⊢c A → Set where
     IF-FALSE : {A : Ty} {M₁ M₂ : ∅ ⊢c A} →
         ------------------------------
         (IF FALSE THEN M₁ ELSE M₂) ↝ M₂
-    APP-BETA : {A B : Ty} {M : (∅ , A) ⊢c B} {N : ∅ ⊢v A} →
+    APP-BETA : {A B : Ty} {M : (∅ , A) ⊢c B} {V : ∅ ⊢v A} →
         ------------------------------------------------
-        ((ƛ M) ∙ N) ↝ ( M [ N ])
-    FST-BETA : {A B : Ty} {M : ∅ ⊢v A} {N : ∅ ⊢v B} →
+        ((ƛ M) ∙ V) ↝ ( M [ V ])
+    FST-BETA : {A B : Ty} {V : ∅ ⊢v A} {W : ∅ ⊢v B} →
         ------------------------------------------------
-        FST ⟨ M , N ⟩ ↝ (RETURN M)
-    SND-BETA : {A B : Ty} {M : ∅ ⊢v A} {N : ∅ ⊢v B} →
+        FST ⟨ V , W ⟩ ↝ (RETURN V)
+    SND-BETA : {A B : Ty} {V : ∅ ⊢v A} {W : ∅ ⊢v B} →
         ------------------------------------------------
-        SND ⟨ M , N ⟩ ↝ (RETURN N)
+        SND ⟨ V , W ⟩ ↝ (RETURN W)
 
 
 data progresses : {A : Ty} → ∅ ⊢c A → Set where
@@ -163,9 +163,9 @@ data progresses : {A : Ty} → ∅ ⊢c A → Set where
 
 progress : {A : Ty} → (M : ∅ ⊢c A) → progresses M
 
-progress (IF TRUE THEN M ELSE M₁) = steps IF-TRUE
-progress (IF FALSE THEN M ELSE M₁) = steps IF-FALSE
-progress (ƛ x ∙ x₁) = steps APP-BETA
-progress (FST ⟨ x , x₁ ⟩) = steps FST-BETA
-progress (SND ⟨ x , x₁ ⟩) = steps SND-BETA
-progress (RETURN x) = is-value
+progress (IF TRUE THEN M ELSE N) = steps IF-TRUE
+progress (IF FALSE THEN M ELSE N) = steps IF-FALSE
+progress (ƛ M ∙ V) = steps APP-BETA
+progress (FST ⟨ V , W ⟩) = steps FST-BETA
+progress (SND ⟨ V , W ⟩) = steps SND-BETA
+progress (RETURN V) = is-value
