@@ -1,6 +1,7 @@
 data Ty : Set where
     BOOL : Ty
     _⇒_ : Ty → Ty → Ty
+    _×_ : Ty → Ty → Ty
 
 data Ctx : Set where
     ∅ : Ctx
@@ -43,6 +44,22 @@ data _⊢_ : Ctx → Ty → Set where
         -----------
         Γ ⊢ (A ⇒ B)
 
+    ⟨_,_⟩ : {Γ : Ctx} {A B : Ty} →
+        Γ ⊢ A →
+        Γ ⊢ B →
+        -----------
+        Γ ⊢ (A × B)
+    
+    FST : {Γ : Ctx} {A B : Ty} →
+        Γ ⊢ (A × B) →
+        -----
+        Γ ⊢ A
+
+    SND : {Γ : Ctx} {A B : Ty} →
+        Γ ⊢ (A × B) →
+        -----
+        Γ ⊢ B
+
 ext : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → A ∈ Δ)
     --------------------------------------
@@ -61,6 +78,9 @@ rename σ (IF M THEN N₁ ELSE N₂) =
     IF (rename σ M) THEN (rename σ N₁) ELSE (rename σ N₂)
 rename σ (M ∙ N) = rename σ M ∙ rename σ N
 rename σ (ƛ M) = ƛ (rename (ext σ) M)
+rename σ ⟨ M , N ⟩ = ⟨ rename σ M , rename σ N ⟩
+rename σ (FST M) = FST (rename σ M)
+rename σ (SND M) = SND (rename σ M)
 
 exts : {Γ Δ : Ctx}
   → ({A : Ty} → A ∈ Γ → Δ ⊢ A)
@@ -80,6 +100,9 @@ subst σ (IF M THEN N₁ ELSE N₂) =
     IF (subst σ M) THEN (subst σ N₁) ELSE (subst σ N₂)
 subst σ (M ∙ N) = subst σ M ∙ subst σ N
 subst σ (ƛ M) = ƛ (subst (exts σ) M)
+subst σ ⟨ M , N ⟩ = ⟨ subst σ M , subst σ N ⟩
+subst σ (FST M) = FST (subst σ M)
+subst σ (SND M) = SND (subst σ M)
 
 _[_] : {Γ : Ctx} {A B : Ty}
   → (Γ , B) ⊢ A
@@ -104,6 +127,11 @@ data value : {Γ : Ctx} {A : Ty} → Γ ⊢ A → Set where
     value-LAMBDA : {Γ : Ctx} {A B : Ty} {M : (Γ , A) ⊢ B} →
         -----------
         value (ƛ M)
+    value-PAIR : {Γ : Ctx} {A B : Ty} {M : Γ ⊢ A} {N : Γ ⊢ B} →
+        value M →
+        value N →
+        -----------
+        value ⟨ M , N ⟩
 
 data _↝_ : {A : Ty} → ∅ ⊢ A → ∅ ⊢ A → Set where
     IF-TRUE : {A : Ty} {M₁ M₂ : ∅ ⊢ A} →
@@ -129,6 +157,33 @@ data _↝_ : {A : Ty} → ∅ ⊢ A → ∅ ⊢ A → Set where
         value N →
         ------------------------------------------------
         ((ƛ M) ∙ N) ↝ ( M [ N ])
+    PAIR-STEP1 : {A B : Ty} {M M' : ∅ ⊢ A} {N : ∅ ⊢ B} →
+        M ↝ M' →
+        ------------------------------------------------
+      ⟨ M , N ⟩ ↝ ⟨ M' , N ⟩
+    PAIR-STEP2 : {A B : Ty} {M : ∅ ⊢ A} {N N' : ∅ ⊢ B} →
+        value M →
+        N ↝ N' →
+        ------------------------------------------------
+        ⟨ M , N ⟩ ↝ ⟨ M , N' ⟩
+    FST-STEP : {A B : Ty} {M M' : ∅ ⊢ (A × B)} →
+        M ↝ M' →
+        ------------------------------------------------
+        (FST M) ↝ (FST M')
+    FST-BETA : {A B : Ty} {M : ∅ ⊢ A} {N : ∅ ⊢ B} →
+        value M →
+        value N →
+        ------------------------------------------------
+        FST ⟨ M , N ⟩ ↝ M
+    SND-STEP : {A B : Ty} {M M' : ∅ ⊢ (A × B)} →
+        M ↝ M' →
+        ------------------------------------------------
+        (SND M) ↝ (SND M')
+    SND-BETA : {A B : Ty} {M : ∅ ⊢ A} {N : ∅ ⊢ B} →
+        value M →
+        value N →
+        ------------------------------------------------
+        SND ⟨ M , N ⟩ ↝ N
 
 
 data progresses : {A : Ty} → ∅ ⊢ A → Set where
@@ -155,3 +210,14 @@ progress (M ∙ N) with progress M
 ...     | is-value V = steps (APP-BETA V)
 ...     | steps N↝N' = steps (APP-STEP2 value-LAMBDA N↝N')
 progress (ƛ M) = is-value value-LAMBDA
+progress ⟨ M , N ⟩ with progress M
+... | steps M↝M' = steps (PAIR-STEP1 M↝M')
+... | is-value V with progress N
+...     | is-value W = is-value (value-PAIR V W)
+...     | steps N↝N' = steps (PAIR-STEP2 V N↝N')
+progress (FST M) with progress M
+... | is-value (value-PAIR V W) = steps (FST-BETA V W)
+... | steps M↝M' = steps (FST-STEP M↝M')
+progress (SND M) with progress M
+... | is-value (value-PAIR V W) = steps (SND-BETA V W)
+... | steps M↝M' = steps (SND-STEP M↝M')
