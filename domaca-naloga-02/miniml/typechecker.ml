@@ -33,6 +33,12 @@ let rec infer_exp ctx = function
       let ty2, eqs2 = infer_exp ctx e2 in
       let alpha = fresh_ty () in
       (alpha, ((ty1, ArrowTy (ty2, alpha)) :: eqs1) @ eqs2)
+  | Pair _ -> (ProdTy, [])
+  | Fst e -> failwith "TODO"
+  | Snd e -> failwith "TODO"
+  | Nil
+  | Cons (e, es) -> failwith "TODO"
+  | Match (e, e1, x, xs, e2) -> failwith "TODO"
   | _ -> failwith "TODO"
 
 let subst_eqs sbst eqs =

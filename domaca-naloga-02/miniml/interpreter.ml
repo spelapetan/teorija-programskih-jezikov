@@ -2,7 +2,7 @@ module S = Syntax
 
 let rec eval_exp = function
   | S.Var _ -> failwith "Expected a closed term"
-  | (S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _) as e -> e
+  | (S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ | S.Pair _ | S.Cons _) as e -> e
   | S.Plus (e1, e2) ->
       let n1 = eval_int e1 and n2 = eval_int e2 in
       S.Int (n1 + n2)
@@ -33,20 +33,35 @@ let rec eval_exp = function
       | S.RecLambda (f, x, e) as rec_f ->
           eval_exp (S.subst_exp [ (f, rec_f); (x, v) ] e)
       | _ -> failwith "Function expected")
+  | S.Fst e -> (
+      match e with
+      | S.Pair (e1, e2) -> eval_exp e1
+      | _ -> failwith "Pair expected")
+  | S.Snd e -> (
+      match e with
+      | S.Pair (e1, e2) -> eval_exp e2
+      | _ -> failwith "Pair expected")
+  | S.Nil
+  | S.Match (e, e1, x, xs, e2) -> (
+      match e with
+      | S.Nil -> eval_exp e1
+      | S.Cons (x, xs) -> eval_exp e2
+      | _ -> failwith "Cons expected")
   | _ -> failwith "TODO"
 
 and eval_int e =
   match eval_exp e with S.Int n -> n | _ -> failwith "Integer expected"
 
 let is_value = function
-  | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ -> true
+  | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ | S.Nil _ -> true
   | S.Var _ | S.Plus _ | S.Minus _ | S.Times _ | S.Equal _ | S.Less _
-  | S.Greater _ | S.IfThenElse _ | S.Apply _ ->
+  | S.Greater _ | S.IfThenElse _ | S.Apply _ | S.Pair _  | S.Cons _ | S.Fst _
+  | S.Snd | S.Match _ ->
       false
   | _ -> failwith "TODO"
 
 let rec step = function
-  | S.Var _ | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ ->
+  | S.Var _ | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ | S.Nil _ ->
       failwith "Expected a non-terminal expression"
   | S.Plus (S.Int n1, S.Int n2) -> S.Int (n1 + n2)
   | S.Plus (S.Int n1, e2) -> S.Plus (S.Int n1, step e2)
@@ -73,6 +88,15 @@ let rec step = function
       S.subst_exp [ (f, rec_f); (x, v) ] e
   | S.Apply (((S.Lambda _ | S.RecLambda _) as f), e) -> S.Apply (f, step e)
   | S.Apply (e1, e2) -> S.Apply (step e1, e2)
+  | S.Pair (e1, e2) -> S.Pair(step e1, e2)
+  | S.Pair (v, e) when is_value v -> S.Pair(v, step e)
+  | S.Cons (e1, e2) -> S.Cons (step e1, e2)
+  | S.Cons (v, e) when is_value v -> S.Cons(v, step e)
+  | S.Fst (S.Pair (v, _)) when is_value v -> S.subst_exp v
+  | S.Fst (e) -> S.Fst (step e)
+  | S.Snd (S.Pair (_, v)) when is_value v -> S.subst_exp v
+  | S.Snd (e) -> S.Snd (step e)
+  | S.Match (e, e1, x, xs, e2) -> failwith "TODO"
   | _ -> failwith "TODO"
 
 let big_step e =
