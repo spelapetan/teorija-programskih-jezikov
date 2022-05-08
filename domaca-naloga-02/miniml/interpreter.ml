@@ -61,7 +61,7 @@ let is_value = function
   | _ -> failwith "TODO"
 
 let rec step = function
-  | S.Var _ | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ | S.Nil _ ->
+  | S.Var _ | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ | S.Nil ->
       failwith "Expected a non-terminal expression"
   | S.Plus (S.Int n1, S.Int n2) -> S.Int (n1 + n2)
   | S.Plus (S.Int n1, e2) -> S.Plus (S.Int n1, step e2)
@@ -96,7 +96,9 @@ let rec step = function
   | S.Fst (e) -> S.Fst (step e)
   | S.Snd (S.Pair (_, v)) when is_value v -> S.subst_exp v
   | S.Snd (e) -> S.Snd (step e)
-  | S.Match (e, e1, x, xs, e2) -> failwith "TODO"
+  | S.Match (S.Nil, e1, x, xs, e2) -> S.subst_exp e1
+  | S.Match (S.Cons(v, vs), e1, x, xs, e2) when is_value v -> S.subst_exp e2
+  | S.Match (e, e1, x, xs, e2) -> S.Match (step e, e1, x, xs, e2)
   | _ -> failwith "TODO"
 
 let big_step e =
