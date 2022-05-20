@@ -1,10 +1,10 @@
-# NAVODILA ZA DRUGO DOMAČO NALOGO
+# NAVODILA ZA TRETJO DOMAČO NALOGO
 
-Naloga obsega razširitev sistema tipov jezika Lambda, dopolnitev operacijske semantike in dokaza o napredku za razširjen sistem tipov.
+Naloga obsega razširitev sistema tipov jezika Lambda ter dopolnitev operacijske semantike in dokaza izreka o varnosti za razširjen sistem tipov.
 
 ## DOPOLNITEV OPERACIJSKE SEMANTIKE IN DOKAZA O NAPREDKU
 
-V datoteki `stlc-naloga.agda` je podana intrinzična formalizacija jezika, ki smo ga spoznali na predavanjih in vajah. Vaša naloga je zapolniti luknje v operacijski semantiki in formalizaciji ter s tem pokazati izrek o ohranitvi in napredku. Operacijska semantika naj podaja neučakano obliko jezika z determinističnim izvajanjem.
+V datoteki `stlc-naloga.agda` je podana intrinzična formalizacija jezika, ki smo ga spoznali na predavanjih in vajah. Vaša naloga je zapolniti luknje v operacijski semantiki in dokazih. Operacijska semantika naj podaja neučakano obliko jezika z determinističnim izvajanjem.
 
 ## ODDAJA
 

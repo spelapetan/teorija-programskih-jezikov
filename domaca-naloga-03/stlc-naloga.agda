@@ -79,7 +79,7 @@ data _⊢_ : Ctx → Ty → Set where
     -- Simbol: \mapsto = ↦
     -- Ker so sedaj spremenljivke poimenovane z indeksi je
     -- tudi match nekoliko drugačen
-    MATCH_WITH[]↦_x∷xs↦_ : {Γ : Ctx} {A B : Ty} →
+    MATCH_WITH[]↦_∷↦_ : {Γ : Ctx} {A B : Ty} →
         Γ ⊢ [ A ]t → 
         Γ ⊢ B → 
         ((Γ , A) , [ A ]t ) ⊢ B →
@@ -271,12 +271,12 @@ data _↝_ : {Γ : Ctx} {A : Ty} → Γ ⊢ A → Γ ⊢ A → Set where
     LIST-MATCH-STEP : {Γ : Ctx} {A B : Ty} {M M' : Γ ⊢ [ A ]t } {N₁ : Γ ⊢ B} {N₂ : ((Γ , A) , [ A ]t ) ⊢ B } →
         M ↝ M' →
         ------------------------------------------------
-        (MATCH M WITH[]↦ N₁ x∷xs↦ N₂) ↝ {!   !}
+        (MATCH M WITH[]↦ N₁ ∷↦ N₂) ↝ {!   !}
     
     LIST-MATCH-NIL-BETA : {Γ : Ctx} {A B : Ty} {N₁ : Γ ⊢ B} 
             {N₂ : ((Γ , A) , [ A ]t ) ⊢ B } →
         ------------------------------------------------
-        (MATCH [] WITH[]↦ N₁ x∷xs↦ N₂) ↝ N₁
+        (MATCH [] WITH[]↦ N₁ ∷↦ N₂) ↝ N₁
     LIST-MATCH-CONS-BETA : 
             {Γ : Ctx} {A B : Ty} {M₁ : Γ ⊢ A } 
             {M₂ : Γ ⊢ [ A ]t } {N₁ : Γ ⊢ B} 
