@@ -95,16 +95,6 @@ Kot smo že videli, v abstraktni sintaksi možne izraze predstavimo z drevesi, k
 Kot smo že omenili, je jezik IMP sestavljen iz aritmetičnih izrazov, ki jih bomo označevali s spremenljivko $e$, logičnih izrazov, ki jih bomo označevali z $b$, ter ukazov, ki jih bomo označevali s $c$.
 
 $$
-  \newcommand{\intsym}[1]{\underline{#1}}
-  \newcommand{\kwd}[1]{\mathbf{#1}}
-  \newcommand{\kwdpre}[1]{\kwd{#1}\;}
-  \newcommand{\kwdmid}[1]{\;\kwd{#1}\;}
-  \newcommand{\kwdpost}[1]{\;\kwd{#1}}
-  \newcommand{\true}{\kwd{true}}
-  \newcommand{\false}{\kwd{false}}
-  \newcommand{\ifthenelse}[3]{\kwdpre{if} #1 \kwdmid{then} #2 \kwdmid{else} #3}
-  \newcommand{\whiledo}[2]{\kwdpre{while} #1 \kwdmid{do} #2}
-  \newcommand{\skip}{\kwd{skip}}
   \begin{aligned}
     \text{aritmetični izraz } e &::=
       \ell \mid
@@ -138,11 +128,6 @@ Oglejmo si vse veljavne dele jezika, pri čemer bomo za vsakega neformalno poved
 Zgornji program bi v abstraktni sintaksi lahko predstavili z ukazom
 
 $$
-  \newcommand{\intsym}[1]{\underline{#1}}
-  \newcommand{\kwd}[1]{\mathbf{#1}}
-  \newcommand{\kwdpre}[1]{\kwd{#1}\;}
-  \newcommand{\kwdmid}[1]{\;\kwd{#1}\;}
-  \newcommand{\kwdpost}[1]{\;\kwd{#1}}
   \begin{aligned}
     &\kwd{fact} := \underline{1}; \\
     &\kwdpre{while} \kwd{m} > \underline{0} \kwdmid{do} \\

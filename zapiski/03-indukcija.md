@@ -11,17 +11,17 @@ Na primer, množico naravnih števil $\mathbb{N}$ lahko definiramo kot **najmanj
 
 Pravili dostikrat zapišemo tudi v obliki:
 $$
-  \frac{}{0 \in \mathbb{N}}
-  \quad
-  \frac{n \in \mathbb{N}}{n^+ \in \mathbb{N}}
+  \infer{}{0 \in \mathbb{N}}
+  \qquad
+  \infer{n \in \mathbb{N}}{n^+ \in \mathbb{N}}
 $$
 V splošnem bomo uporabljali pravila oblike
 $$
-  \frac{h_1 \quad h_2 \quad \cdots \quad h_n}{c},
+  \infer{h_1 \quad h_2 \quad \cdots \quad h_n}{c},
 $$
 kjer nad črto pišemo _predpostavke_ $h_1, \dots, h_n$, pod črto pa _zaključek_ $c$. Pravilom oblike
 $$
-  \frac{}{\quad c \quad},
+  \infer{}{\quad c \quad},
 $$
 ki nad črto nimajo predpostavk, pravimo _aksiomi_.
 
@@ -48,13 +48,13 @@ definiramo tudi kot najmanjšo množico, ki:
 
 oziroma s pravili
 $$
-  \frac{}{n \in \mathbb{E}}(n \in \mathbb{N})
+  \infer{}{n \in \mathbb{E}}(n \in \mathbb{N})
   \quad
-  \frac{e_1 \in \mathbb{E}\quad e_2 \in \mathbb{E}}{e_1 + e_2 \in \mathbb{E}}
+  \infer{e_1 \in \mathbb{E}\quad e_2 \in \mathbb{E}}{e_1 + e_2 \in \mathbb{E}}
   \quad
-  \frac{e_1 \in \mathbb{E}\quad e_2 \in \mathbb{E}}{e_1 * e_2 \in \mathbb{E}}
+  \infer{e_1 \in \mathbb{E}\quad e_2 \in \mathbb{E}}{e_1 * e_2 \in \mathbb{E}}
   \quad
-  \frac{e \in \mathbb{E}}{-e \in \mathbb{E}}
+  \infer{e \in \mathbb{E}}{-e \in \mathbb{E}}
 $$
 Opazimo, da smo pri prvem pravilu $n \in \mathbb{N}$ zapisali kot stranski pogoj, saj je množica $\mathbb{N}$ že definirana in ni podana z napisanimi pravili.
 
@@ -66,14 +66,14 @@ Tudi tu vse elemente $\mathbb{E}$ dobimo tako, da končno mnogokrat uporabljamo 
 
 Če postopek nadaljujemo, dobimo vse elemente množice $\mathbb{E}$, vsakega v končno mnogo korakih. Vsakemu elementu $e \in \mathbb{E}$ pripada tudi natanko določeno _drevo izpeljave_, iz katerega se vidi, kako smo prišli do dejstva, da $\mathbb{E}$ vsebuje $e$. V tem drevesu je $e$ koren, pravila so vozlišča, aksiomi pa listi. Na primer, elementu $42 + (6 \ast 7)$ pripada drevo
 $$
-  \frac
+  \infer
     {
-      \frac
+      \infer
         {}
         {42 \in \mathbb{E}}
       \quad
-      \frac
-        {\frac{}{6 \in \mathbb{E}} \quad \frac{}{7 \in \mathbb{E}}}
+      \infer
+        {\infer{}{6 \in \mathbb{E}} \quad \infer{}{7 \in \mathbb{E}}}
       {6 \ast 7 \in \mathbb{E}}
     }
     {42 + (6 \ast 7) \in \mathbb{E}}
@@ -86,24 +86,24 @@ Pri teoriji programskih jezikov bomo pogosto uporabljali induktivno podane relac
 
 Ker so relacije definirane kot podmnožice domene, bi lahko induktivno podane relacije podali kot najmanjše podmnožice, zaprte za dana pravila. Tako bi množico sodih naravnih števil definirali kot najmanjšo podmnožico $S \subseteq \mathbb{N}$, zaprto za pravili:
 $$
-  \frac{}{0 \in S}
+  \infer{}{0 \in S}
   \quad
-  \frac{n \in S}{n + 2 \in S}
+  \infer{n \in S}{n + 2 \in S}
 $$
 Da pa bomo vse spravili pod eno samo definicijo, hkrati pa še bolj zvesto sledili pristopu, ki ga uporablja Agda, bomo raje definirali družino množic $\mathsf{sodo}_n$, ki bodo predstavljale dokaze, da je $n$ sodo število. Množica $\mathsf{sodo}_n$ bo torej neprazna, kadar bo $n$ sodo, in prazna, kadar bo $n$ liho. Zgornji pravili bi tako lahko napisali kot:
 $$
-  \frac{}{\mathsf{nicJeSodo} \in \mathsf{sodo}_0}
+  \infer{}{\mathsf{nicJeSodo} \in \mathsf{sodo}_0}
   \quad
-  \frac{p \in \mathsf{sodo}_n}{\mathsf{sodoPlusDvaJeSodo} \, p \in \mathsf{sodo}_{n + 2}}
+  \infer{p \in \mathsf{sodo}_n}{\mathsf{sodoPlusDvaJeSodo} \, p \in \mathsf{sodo}_{n + 2}}
 $$
 Za množice $\mathsf{sodo}_n$ imamo torej dva konstruktorja. Konstanto $\mathsf{nicJeSodo}$ ter konstruktor $\mathsf{sodoPlusDvaJeSodo}$, ki dokaže, da je $n + 2$ sodo, kadar obstaja dokaz $p$, da je $n$ sodo. Preverimo lahko, da je množica $\mathsf{sodo}_n$ neprazna natanko tedaj, kadar je $n \in S$.
 
 Pri relacijah bomo pravila za konstrukcijo množic pisali malo drugače, da bomo bolj poudarili njihovo vsebino:
 $$
 \def\sc#1{\small\dosc#1\csod} \def\dosc#1#2\csod{{\rm #1{\scriptsize #2}}}
-  \frac{}{0 \, \mathsf{sodo}} \sc{NIC}\sc{JE}\sc{SODO}
+  \infer{}{0 \, \mathsf{sodo}} \sc{NIC}\sc{JE}\sc{SODO}
   \quad
-  \frac{n \, \mathsf{sodo}}{n + 2 \, \mathsf{sodo}} \sc{SODO}\sc{PLUS}\sc{DVA}\sc{JE}\sc{SODO}
+  \infer{n \, \mathsf{sodo}}{n + 2 \, \mathsf{sodo}} \sc{SODO}\sc{PLUS}\sc{DVA}\sc{JE}\sc{SODO}
 $$
 Če nas imena pravil (torej konstruktorjev) ne bodo zanimala, jih bomo izpustili.
 
@@ -115,21 +115,21 @@ Induktivne množice bomo gradili po korakih: v prvem koraku bomo dodali vse elem
 
 Za primer si oglejmo množico naravnih števil. Spomnimo se na pravili:
 $$
-  \frac{}{0 \in \mathbb{N}}
+  \infer{}{0 \in \mathbb{N}}
   \quad
-  \frac{n \in \mathbb{N}}{n^+ \in \mathbb{N}}
+  \infer{n \in \mathbb{N}}{n^+ \in \mathbb{N}}
 $$
 Ker so naravna števila dveh različnih oblik (nič oz. naslednik), bomo v konstrukciji množice $F X$ nastopala disjunktna vsota. Ničla nima nobenega dodatnega argumenta, zato jo bomo predstavili z $\iota_1(\ast)$, kjer je $\ast$ edini element singletona $1$. Naslednik pa ima en argument, ki mora priti iz množice predpostavk, zato ga bomo predstavili z $\iota_2(x)$, kjer je $x \in X$. Zato bomo množico pravil za naravna števila predstavili s preslikavo $F X = 1 + X$. Število $2$ bi predstavljal element $\iota_2(\iota_2(\iota_1(\ast))$
 
 V splošnem vsakemu pravilu ustreza en sumand v disjunktni vsoti, sestavljen iz množic, ki ustrezajo predpostavkam pravil. Recimo, pravilom za aritmetične izraze
 $$
-  \frac{}{n \in \mathbb{E}}(n \in \mathbb{N})
+  \infer{}{n \in \mathbb{E}}(n \in \mathbb{N})
   \quad
-  \frac{e_1 \in \mathbb{E}\quad e_2 \in \mathbb{E}}{e_1 + e_2 \in \mathbb{E}}
+  \infer{e_1 \in \mathbb{E}\quad e_2 \in \mathbb{E}}{e_1 + e_2 \in \mathbb{E}}
   \quad
-  \frac{e_1 \in \mathbb{E}\quad e_2 \in \mathbb{E}}{e_1 * e_2 \in \mathbb{E}}
+  \infer{e_1 \in \mathbb{E}\quad e_2 \in \mathbb{E}}{e_1 * e_2 \in \mathbb{E}}
   \quad
-  \frac{e \in \mathbb{E}}{-e \in \mathbb{E}}
+  \infer{e \in \mathbb{E}}{-e \in \mathbb{E}}
 $$
 ustreza preslikava
 $$
