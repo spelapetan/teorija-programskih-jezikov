@@ -10,19 +10,23 @@ Na primer, množico naravnih števil $\mathbb{N}$ lahko definiramo kot **najmanj
  za poljuben $n$ vsebuje tudi njegovega naslednika $n^+$.
 
 Pravili dostikrat zapišemo tudi v obliki:
+
 $$
-  \infer{}{0 \in \mathbb{N}}
-  \qquad
-  \infer{n \in \mathbb{N}}{n^+ \in \mathbb{N}}
+  \infer{}{0 \in \mathbb{N}} \qquad \infer{n \in \mathbb{N}}{n^+ \in \mathbb{N}}
 $$
+
 V splošnem bomo uporabljali pravila oblike
+
 $$
   \infer{h_1 \quad h_2 \quad \cdots \quad h_n}{c},
 $$
+
 kjer nad črto pišemo _predpostavke_ $h_1, \dots, h_n$, pod črto pa _zaključek_ $c$. Pravilom oblike
+
 $$
   \infer{}{\quad c \quad},
 $$
+
 ki nad črto nimajo predpostavk, pravimo _aksiomi_.
 
 Katere elemente vsebuje $\mathbb{N}$?
@@ -36,9 +40,11 @@ Na vsakem koraku dobimo novo naravno število in obratno, vsak element $\mathbb{
 ### Aritmetični izrazi
 
 Podobno lahko mnnožico aritmetičnih izrazov $\mathbb{E}$, ki smo jo definirali že z BNF sintakso
+
 $$
   e ::= n \ |\ e_1 + e_2 \ |\ e_1 * e_2 \ |\ -e,
 $$
+
 definiramo tudi kot najmanjšo množico, ki:
 
 * vsebuje vsako celo število $n$,
@@ -47,6 +53,7 @@ definiramo tudi kot najmanjšo množico, ki:
 * za poljuben izraz $e \in \mathbb{E}$ vsebuje tudi izraz $-e$;
 
 oziroma s pravili
+
 $$
   \infer{}{n \in \mathbb{E}}(n \in \mathbb{N})
   \quad
@@ -56,6 +63,7 @@ $$
   \quad
   \infer{e \in \mathbb{E}}{-e \in \mathbb{E}}
 $$
+
 Opazimo, da smo pri prvem pravilu $n \in \mathbb{N}$ zapisali kot stranski pogoj, saj je množica $\mathbb{N}$ že definirana in ni podana z napisanimi pravili.
 
 Tudi tu vse elemente $\mathbb{E}$ dobimo tako, da končno mnogokrat uporabljamo pravila.
@@ -65,6 +73,7 @@ Tudi tu vse elemente $\mathbb{E}$ dobimo tako, da končno mnogokrat uporabljamo 
 3. Nato vidimo, da mora $\mathbb{E}$ vsebovati tudi vse kombinacije elementov, ki smo jih obili v prejšnjih korakih, na primer $(-2 + 3) \ast (0 \ast 1)$ ali $-(-42) + (6 \ast 7)$.
 
 Če postopek nadaljujemo, dobimo vse elemente množice $\mathbb{E}$, vsakega v končno mnogo korakih. Vsakemu elementu $e \in \mathbb{E}$ pripada tudi natanko določeno _drevo izpeljave_, iz katerega se vidi, kako smo prišli do dejstva, da $\mathbb{E}$ vsebuje $e$. V tem drevesu je $e$ koren, pravila so vozlišča, aksiomi pa listi. Na primer, elementu $42 + (6 \ast 7)$ pripada drevo
+
 $$
   \infer
     {
@@ -78,6 +87,7 @@ $$
     }
     {42 + (6 \ast 7) \in \mathbb{E}}
 $$
+
 Vidimo, da na $n$-tem koraku dobimo ravno tiste elemente z drevesom izpeljave višine $n$.
 
 ### Induktivno podane relacije
@@ -85,26 +95,32 @@ Vidimo, da na $n$-tem koraku dobimo ravno tiste elemente z drevesom izpeljave vi
 Pri teoriji programskih jezikov bomo pogosto uporabljali induktivno podane relacije, s katerimi bomo na primer definirali, kdaj se en izraz evalvira v drugega ali pa kdaj ima dani izraz veljaven tip. V preostanku tega razdelka pa si bomo izbrali bolj enostaven primer in sicer soda naravna števila.
 
 Ker so relacije definirane kot podmnožice domene, bi lahko induktivno podane relacije podali kot najmanjše podmnožice, zaprte za dana pravila. Tako bi množico sodih naravnih števil definirali kot najmanjšo podmnožico $S \subseteq \mathbb{N}$, zaprto za pravili:
+
 $$
   \infer{}{0 \in S}
   \quad
   \infer{n \in S}{n + 2 \in S}
 $$
+
 Da pa bomo vse spravili pod eno samo definicijo, hkrati pa še bolj zvesto sledili pristopu, ki ga uporablja Agda, bomo raje definirali družino množic $\mathsf{sodo}_n$, ki bodo predstavljale dokaze, da je $n$ sodo število. Množica $\mathsf{sodo}_n$ bo torej neprazna, kadar bo $n$ sodo, in prazna, kadar bo $n$ liho. Zgornji pravili bi tako lahko napisali kot:
+
 $$
   \infer{}{\mathsf{nicJeSodo} \in \mathsf{sodo}_0}
   \quad
   \infer{p \in \mathsf{sodo}_n}{\mathsf{sodoPlusDvaJeSodo} \, p \in \mathsf{sodo}_{n + 2}}
 $$
+
 Za množice $\mathsf{sodo}_n$ imamo torej dva konstruktorja. Konstanto $\mathsf{nicJeSodo}$ ter konstruktor $\mathsf{sodoPlusDvaJeSodo}$, ki dokaže, da je $n + 2$ sodo, kadar obstaja dokaz $p$, da je $n$ sodo. Preverimo lahko, da je množica $\mathsf{sodo}_n$ neprazna natanko tedaj, kadar je $n \in S$.
 
 Pri relacijah bomo pravila za konstrukcijo množic pisali malo drugače, da bomo bolj poudarili njihovo vsebino:
+
 $$
 \def\sc#1{\small\dosc#1\csod} \def\dosc#1#2\csod{{\rm #1{\scriptsize #2}}}
   \infer{}{0 \, \mathsf{sodo}} \sc{NIC}\sc{JE}\sc{SODO}
   \quad
   \infer{n \, \mathsf{sodo}}{n + 2 \, \mathsf{sodo}} \sc{SODO}\sc{PLUS}\sc{DVA}\sc{JE}\sc{SODO}
 $$
+
 Če nas imena pravil (torej konstruktorjev) ne bodo zanimala, jih bomo izpustili.
 
 ## Konstrukcija induktivnih množic
@@ -114,14 +130,17 @@ $$
 Induktivne množice bomo gradili po korakih: v prvem koraku bomo dodali vse elemente, ki sledijo iz aksiomov, nato tiste, ki imajo drevesa izpeljave z globino 1, tiste z globino 2 in tako naprej. Pri tem bomo vsako množico pravil predstavili s preslikavo $F$, ki množico $X$ slika v množico $F X$, sestavljeno iz vseh zaključkov pravil, katerih predpostavke so vsebovane v $X$. Množica $X$ bo torej zaprta za pravila natanko tedaj, kadar bo $F X \subseteq X$. "Ulomke", kot smo jih pisali doslej, bomo uporabljali še naprej, vendar nam bodo le služili kot krajši zapis preslikave $F$.
 
 Za primer si oglejmo množico naravnih števil. Spomnimo se na pravili:
+
 $$
   \infer{}{0 \in \mathbb{N}}
   \quad
   \infer{n \in \mathbb{N}}{n^+ \in \mathbb{N}}
 $$
+
 Ker so naravna števila dveh različnih oblik (nič oz. naslednik), bomo v konstrukciji množice $F X$ nastopala disjunktna vsota. Ničla nima nobenega dodatnega argumenta, zato jo bomo predstavili z $\iota_1(\ast)$, kjer je $\ast$ edini element singletona $1$. Naslednik pa ima en argument, ki mora priti iz množice predpostavk, zato ga bomo predstavili z $\iota_2(x)$, kjer je $x \in X$. Zato bomo množico pravil za naravna števila predstavili s preslikavo $F X = 1 + X$. Število $2$ bi predstavljal element $\iota_2(\iota_2(\iota_1(\ast))$
 
 V splošnem vsakemu pravilu ustreza en sumand v disjunktni vsoti, sestavljen iz množic, ki ustrezajo predpostavkam pravil. Recimo, pravilom za aritmetične izraze
+
 $$
   \infer{}{n \in \mathbb{E}}(n \in \mathbb{N})
   \quad
@@ -131,7 +150,9 @@ $$
   \quad
   \infer{e \in \mathbb{E}}{-e \in \mathbb{E}}
 $$
+
 ustreza preslikava
+
 $$
   F X = \mathbb{N} + (X \times X) + (X \times X) + X
 $$
@@ -152,15 +173,19 @@ Naj bo $A$ poljubna množica ter naj bosta $F$ in $G$ preslikavi, ki zadoščata
 ter s tem tudi preslikavi, s katerima smo definirali naravna števila in aritmetične izraze. Primer preslikave, ki ne zadošča drugemu pogoju je potenciranje $X \mapsto \mathcal{P} X$.
 
 Definirajmo zaporedje
+
 $$
   I_0 = \emptyset \qquad I_{n + 1} = F I_n
 $$
+
 ter pokažimo, da je $I = \bigcup_{n = 0}^{\infty} I_n$ najmanjša množica, zaprta za $F$. Preverimo lahko, da $I_n$ vsebuje natanko tiste elemente, katerih drevo izpeljave ima globino kvečjemu $n$.
 
 Pokažimo najprej, da je $F I \subseteq I$. Ker je $F$ definirana z vrednostmi na končnih podmnožicah, velja
+
 $$
   F I = \bigcup_{A \subseteq^{\text{končna}} I} F A
 $$
+
 Ker je $I = \bigcup_{n = 0}^{\infty} I_n$, za vsako končno $A \subseteq I$ obstaja tak $n$, da je $A \subseteq I_n$. Ker je $F$ monotona, je $F A \subseteq F I_n = I_{n + 1} \subseteq I$. Torej je tudi $\bigcup_{A \subseteq^{\text{končna}} I} F A \subseteq I$.
 
 Vzemimo še množico $X$, da velja $F X \subseteq X$ ter pokažimo, da je $I \subseteq X$. Z indukcijo najprej pokažimo, da je $I_n \subseteq X$. Ker je $I_0 = \emptyset \subseteq X$, je osnovni korak trivialen. Sedaj predpostavimo, da velja $I_n \subseteq X$. Tedaj velja tudi $I_{n + 1} = F I_n \subseteq F X \subseteq X$, saj je preslikava $F$ monotona. Ker so vsi členi $I_n \subseteq X$, velja tudi $I = \bigcup_{n = 0}^{\infty} I_n \subseteq X$.

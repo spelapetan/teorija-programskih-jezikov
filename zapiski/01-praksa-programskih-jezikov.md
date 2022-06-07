@@ -120,7 +120,7 @@ $$
 Oglejmo si vse veljavne dele jezika, pri čemer bomo za vsakega neformalno povedali, kaj predstavlja. Aritmetični izrazi so sestavljeni iz branja vrednosti pomnilniških lokacij, celoštevilskih konstant (ki jih podčrtamo, da jih ločimo od celih števil) ter aritmetičnih operacij, logični izrazi pa so sestavljeni iz logičnih konstant ter primerjav. Ukazi so bolj zanimivi:
 
 - pogojni ukaz, ki izvede $c_1$, kadar $b$ predstavlja resnično logično vrednost, oziroma $c_2$, kadar $b$ predstavlja neresnično logično vrednost;
-- zanka `while` izvaja ukaz $c$, dokler $b$ predstavlja resnično logično vrednost;
+- zanka while` izvaja ukaz $c$, dokler $b$ predstavlja resnično logično vrednost;
 - zaporedno izvajanje najprej izvede $c_1$ - ko (če) se ta konča, izvede še $c_2$;
 - prirejanje izračuna aritmetični izraz $e$ ter njegovo vrednost zapiše v pomnilniško lokacijo $\ell$;
 - zadnji ukaz ne naredi ničesar, uporabimo pa ga na primer takrat, kadar v pogojnem stavku želimo nekaj storiti le v eni izmed vej.
@@ -129,10 +129,10 @@ Zgornji program bi v abstraktni sintaksi lahko predstavili z ukazom
 
 $$
   \begin{aligned}
-    &\kwd{fact} := \underline{1}; \\
-    &\kwdpre{while} \kwd{m} > \underline{0} \kwdmid{do} \\
-    &\quad \kwd{fact} := \kwd{fact} * \kwd{m}; \\
-    &\quad \kwd{m} := \kwd{m} - \underline{1}
+    &\mathsf{fact} := \intsym{1}; \\
+    &\whiledo{\mathsf{m} > \intsym{0}}{} \\
+    &\quad \mathsf{fact} := \mathsf{fact} * \mathsf{m}; \\
+    &\quad \mathsf{m} := \mathsf{m} - \intsym{1}
   \end{aligned}
 $$
 
@@ -170,20 +170,20 @@ type cmd =
   | Skip
 ```
 
-Na primer, aritmetična izraza $e_1 = (\underline{6} * \underline{7})$ in $e_2 = (\mathsf{m} - \underline{1})$ bi predstavili z
+Na primer, aritmetična izraza $e_1 = (\intsym{6} * \intsym{7})$ in $e_2 = (\mathsf{m} - \intsym{1})$ bi predstavili z
 
 ```{code-cell}
 let exp1 = Times (Int 6, Int 7)
 let exp2 = Minus (Lookup (Location "m"), Int 1)
 ```
 
-logični izraz $b = (\mathsf{m} > \underline{0})$ z
+logični izraz $b = (\mathsf{m} > \intsym{0})$ z
 
 ```{code-cell}
 let bexp = Greater (Lookup (Location "m"), Int 0)
 ```
 
-ukaza $c_1 = (\mathsf{m} := e_2)$ in $c_2 = (\mathbf{while} \; b \; \mathbf{do} c_1)$ pa z
+ukaza $c_1 = (\mathsf{m} := e_2)$ in $c_2 = (\whiledo{b}{c_1})$ pa z
 
 ```{code-cell}
 let cmd1 = Assign (Location "m", exp2)

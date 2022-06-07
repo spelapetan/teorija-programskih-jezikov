@@ -6,3 +6,21 @@ repository:
   branch: zapiski
 launch_buttons:
   binderhub_url: 'https://mybinder.org'
+sphinx:
+  config:
+    mathjax_config:
+      tex:
+        macros:
+          "intsym": ["\\underline{#1}", 1]
+          "kwd": ["\\mathbf{#1}", 1]
+          "kwdpre": ["\\kwd{#1}\\;", 1]
+          "kwdmid": ["\\;\\kwd{#1}\\;", 1]
+          "kwdpost": ["\\;\\kwd{#1}", 1]
+          "true": "\\kwd{true}"
+          "false": "\\kwd{false}"
+          "ifthenelse": ["\\kwdpre{if} #1 \\kwdmid{then} #2 \\kwdmid{else} #3", 3]
+          "whiledo": ["\\kwdpre{while} #1 \\kwdmid{do} #2", 2]
+          "skip": "\\kwd{skip}"
+          "ttt": "t\\!t"
+          "fff": "f\\!\\!f"
+          "infer": ["\\displaystyle{\\frac{#1}{#2}}", 2]

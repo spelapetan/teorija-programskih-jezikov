@@ -4,7 +4,6 @@ parts:
 - caption: Osnove
   chapters:
   - file: 01-praksa-programskih-jezikov.md
-  - file: 02-uvod-v-agdo.agda.md
   - file: 03-indukcija.md
 - caption: Metateorija
   chapters:
