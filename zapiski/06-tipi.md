@@ -1,10 +1,10 @@
 # Tipi
 
+Videli smo, da lahko v λ-računu zakodiramo vse običajne programske konstrukte, vendar to ni najbolj praktično. Običajno vzamemo λ-račun, v katerem te dodatne konstrukte vzamemo kot osnovne in ne izpeljane. Za primer razširitve vzemimo cela števila in logične vrednosti.
+
 ## Definicija jezika
 
-### Sintaksa izrazov
-
-Vzemimo λ-račun, kot smo ga spoznali na predavanjih:
+## Sintaksa
 
 $$
     \begin{align*}
@@ -20,9 +20,10 @@ $$
         \mid M_1 \, M_2
 \end{align*}
 $$
+
 ### Operacijska semantika
 
-Za vrednosti vzamemo:
+Podobno se spremeni operacijska semantika, kjer vrednosti razširimo s konstantami:
 
 $$
     \begin{align*}
@@ -33,7 +34,7 @@ $$
     \end{align*}
 $$
 
-Operacijsko semantiko podamo z malimi koraki:
+Operacijsko semantiko malih korakov pa podamo s pravili:
 
 $$
 \infer{
@@ -50,13 +51,11 @@ $$
     \ifthenelse{\false}{M_1}{M_2}  \leadsto  M_2
 } \\[2em]
 
-
 \infer{
     M_1  \leadsto  M_1'
 }{
     M_1 + M_2  \leadsto  M_1' + M_2
 } \qquad
-
 
 \infer{
     M_2  \leadsto  M_2'
@@ -68,13 +67,11 @@ $$
     \intsym{n_1} + \intsym{n_2}  \leadsto  \intsym{n_1 + n_2}
 } \\[2em]
 
-
 \infer{
     M_1  \leadsto  M_1'
 }{
     M_1 * M_2  \leadsto  M_1' * M_2
 } \qquad
-
 
 \infer{
     M_2  \leadsto  M_2'
@@ -86,13 +83,11 @@ $$
     \intsym{n_1} * \intsym{n_2}  \leadsto  \intsym{n_1 · n_2}
 } \\[2em]
 
-
 \infer{
     M_1  \leadsto  M_1'
 }{
     M_1 < M_2  \leadsto  M_1' < M_2
 } \qquad
-
 
 \infer{
     M_2  \leadsto  M_2'
@@ -100,13 +95,11 @@ $$
     V_1 < M_2  \leadsto  V_1 < M_2'
 } \\[2em]
 
-
 \infer{
     n_1 < n_2
 }{
     \intsym{n_1} < \intsym{n_2}  \leadsto  \true
 } \qquad
-
 
 \infer{
     n_1 ≮ n_2
@@ -114,13 +107,11 @@ $$
     \intsym{n_1} < \intsym{n_2}  \leadsto  \false
 } \\[2em]
 
-
 \infer{
     M_1  \leadsto  M_1'
 }{
     M_1 \, M_2  \leadsto  M_1' \, M_2
 } \qquad
-
 
 \infer{
     M_2  \leadsto  M_2'
@@ -131,11 +122,11 @@ $$
 \infer{}{
     (\lambda x. M) \, V  \leadsto  M[V / x]
 }
-
 $$
-### Sintaksa tipov
 
-Tipi so:
+### Določanje tipov
+
+Prej so vsi izrazi predstavljali funkcije, z novimi razširitvami pa temu ni več tako, zato si za razločevanje pomagamo s tipi, ki jih bomo priredili vsem veljavnim izrazom. Sintakso tipov podamo z:
 
 $$
 \begin{align*}
@@ -145,9 +136,9 @@ A, B &::= \boolty
 \end{align*}
 $$
 
-### Pravila za določanje tipov
+Vidimo, da funkcijski tip ne pove le tega, da imamo opravka s funkcijo, temveč tudi to, od kod in kam ta funkcija slika.
 
-Pravila za določanje tipov pa so:
+Tako kot smo pri preverjanju veljavnih izrazov v IMPu morali vedeti, katera množica lokacij $L$ je definirana, moramo v kakšne spremenljivke imamo in kakšni so njihovi tipi. S tem namenom uvedemo _kontekste_ $\Gamma = x_1 : A_1, \ldots, x_n : A_n$, ki povedo, da za spremenljivko $x_i$ predpostavimo tip $A_i$. Tedaj definiramo relacijo $\Gamma \vdash M : A$, ki pove, da ima izraz $M$ tip $A$, če predpostavimo, da imajo spremenljivke tipe, določene s kontekstom $\Gamma$. Relacijo podamo s pravili:
 
 $$
 \infer{
@@ -163,7 +154,6 @@ $$
 \infer{}{
     \Gamma \vdash \false : \boolty
 } \\[2em]
-
 
 \infer{
     \Gamma \vdash M : \boolty \qquad
@@ -184,14 +174,12 @@ $$
     \Gamma \vdash M_1 + M_2 : \intty
 } \\[2em]
 
-
 \infer{
     \Gamma \vdash M_1 : \intty \qquad
     \Gamma \vdash M_2 : \intty
 }{
     \Gamma \vdash M_1 * M_2 : \intty
 } \qquad
-
 
 \infer{
     \Gamma \vdash M_1 : \intty \qquad
@@ -214,7 +202,16 @@ $$
 }
 $$
 
+Vsak izraz nima tipa, na primer $\true + \intsym{2}$ ga nima. Za tiste izraze, ki pa tip imajo, pa velja podoben izrek o varnosti, kot smo ga spoznali za IMP.
+
 ## Izrek o varnosti
+
+Izrek o varnosti tako kot prej razdelimo na dva dela:
+
+1. napredek, ki pove, da je vsak izraz, ki ima tip, bodisi vrednost bodisi lahko naredi korak, ter
+2. ohranitev, ki pove, da izraz v vsakem koraku ohrani prvotni tip.
+
+Ker v operacijski semantiki nastopa substitucija, moramo najprej dokazati, da ima pričakovani tip.
 
 ### Lema (o substituciji)
 
