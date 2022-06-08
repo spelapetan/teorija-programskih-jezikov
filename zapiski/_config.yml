@@ -24,3 +24,5 @@ sphinx:
           "ttt": "t\\!t"
           "fff": "f\\!\\!f"
           "infer": ["\\displaystyle{\\frac{#1}{#2}}", 2]
+          "boolty": "\\kwd{bool}"
+          "intty": "\\kwd{int}"

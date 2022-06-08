@@ -12,6 +12,8 @@
         "\\skip": "\\kwd{skip}",
         "\\ttt": "t\\!t",
         "\\fff": "f\\!\\!f",
-        "\\infer": "\\displaystyle{\\frac{#1}{#2}}"
-    }
+        "\\infer": "\\displaystyle{\\frac{#1}{#2}}",
+        "\\boolty": "\\kwd{bool}",
+        "\\intty": "\\kwd{int}"
+  }
 }
