@@ -26,3 +26,4 @@ sphinx:
           "infer": ["\\displaystyle{\\frac{#1}{#2}}", 2]
           "boolty": "\\kwd{bool}"
           "intty": "\\kwd{int}"
+          "eqs": "\\mathcal{E}"

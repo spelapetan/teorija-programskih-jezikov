@@ -27,7 +27,7 @@ $$
 \begin{align*}
 A, B &::= \boolty
         \mid \intty
-        \mid A → B
+        \mid A \to B
 \end{align*}
 $$
 
@@ -88,11 +88,11 @@ $$
 \infer{
     \Gamma, x : A \vdash M : B
 }{
-    \Gamma \vdash \lambda x. M : A → B
+    \Gamma \vdash \lambda x. M : A \to B
 } \qquad
 
 \infer{
-    \Gamma \vdash M_1 : A → B \qquad
+    \Gamma \vdash M_1 : A \to B \qquad
     \Gamma \vdash M_2 : A
 }{
     \Gamma \vdash M_1 \, M_2 : B
@@ -283,17 +283,17 @@ Z indukcijo na izpeljavo $\Gamma, x : A, \Gamma' \vdash M : B$.
     iz česar sledi $\Gamma, \Gamma' \vdash (M_1 < M_2)[N / x] : \intty$, saj je
     $(M_1 < M_2)[N / x] = M_1[N / x] < M_2[N / x]$.
 
-* $\Gamma, x : A, \Gamma' \vdash \lambda y. M' : A' → B'$, mora veljati
+* $\Gamma, x : A, \Gamma' \vdash \lambda y. M' : A' \to B'$, mora veljati
     $\Gamma, x : A, \Gamma', y : A' \vdash M' : B'$.
     Po indukcijski predpostavki zato velja
     $\Gamma, \Gamma', y : A' \vdash M'[N / x] : B'$
-    iz česar sledi $\Gamma, \Gamma' \vdash (\lambda y. M')[N / x] : A' → B'$, saj je
+    iz česar sledi $\Gamma, \Gamma' \vdash (\lambda y. M')[N / x] : A' \to B'$, saj je
     $(\lambda y. M')[N / x] = \lambda y. M'[N / x]$.
 
 * $\Gamma, x : A, \Gamma' \vdash M_1 \, M_2 : B$, mora veljati
-    $\Gamma, x : A, \Gamma' \vdash M_1 : A' → B$ in $\Gamma, x : A, \Gamma' \vdash M_2 : A'$.
+    $\Gamma, x : A, \Gamma' \vdash M_1 : A' \to B$ in $\Gamma, x : A, \Gamma' \vdash M_2 : A'$.
     Po indukcijski predpostavki zato velja
-    $\Gamma, \Gamma' \vdash M_1[N / x] : A' → B$ in $\Gamma, \Gamma' \vdash M_2[N / x] : A'$
+    $\Gamma, \Gamma' \vdash M_1[N / x] : A' \to B$ in $\Gamma, \Gamma' \vdash M_2[N / x] : A'$
     iz česar sledi $\Gamma, \Gamma' \vdash (M_1 \, M_2)[N / x] : \intty$, saj je
     $(M_1 \, M_2)[N / x] = M_1[N / x] \, M_2[N / x]$.
 
@@ -339,12 +339,12 @@ Z indukcijo na predpostavko o določenem tipu.
 
 * $\vdash M_1 < M_2 : \boolty$, je dokaz podoben kot za vsoto.
 
-* $\vdash \lambda x. M : A → B$, imamo vrednost (1).
+* $\vdash \lambda x. M : A \to B$, imamo vrednost (1).
 
-* $\vdash M_1 \, M_2 : B$, mora veljati $\vdash M_1 : A → B$ in $\vdash M_2 : A$ za nek $A$.
+* $\vdash M_1 \, M_2 : B$, mora veljati $\vdash M_1 : A \to B$ in $\vdash M_2 : A$ za nek $A$.
     Po indukciji za $M_1$ dobimo dva primera:
     1. $M_1$ je vrednost $V_1$. V tem primeru po indukciji za $M_2$ dobimo dva primera:
-        1. Tudi $M_2$ je vrednost $V_2$. Ker velja $\vdash M_1 : A → B$, mora veljati $M_1 = \lambda x. M$ za neka $x$ in $M$. Tedaj velja $M_1 \, M_2 = (\lambda x. M) V_2 \leadsto M[V_2 / x]$.
+        1. Tudi $M_2$ je vrednost $V_2$. Ker velja $\vdash M_1 : A \to B$, mora veljati $M_1 = \lambda x. M$ za neka $x$ in $M$. Tedaj velja $M_1 \, M_2 = (\lambda x. M) V_2 \leadsto M[V_2 / x]$.
         2. Obstaja $M_2'$, da velja $M_2 \leadsto M_2'$, zato velja tudi $M_1 \, M_2 = V_1 \, M_2 \leadsto V_1 M_2'$.
     2. Obstaja $M_1'$, da velja $M_1 \leadsto M_1'$, zato velja tudi $M_1 \, M_2 \leadsto M_1' M_2$.
 
@@ -388,19 +388,19 @@ Z indukcijo na predpostavko o koraku.
 
 * $M_1 \, M_2 \leadsto M_1' \, M_2$, mora veljati $M_1 \leadsto M_1'$,
   iz $\Gamma \vdash M_1 \, M_2 : A$ pa sledi
-  $\Gamma \vdash M_1 : B → A$ in $\Gamma \vdash M_2 : B$ za nek $B$.
-  Po indukcijski predpostavki velja $\Gamma \vdash M_1' : B → A$, iz česar sledi tudi
+  $\Gamma \vdash M_1 : B \to A$ in $\Gamma \vdash M_2 : B$ za nek $B$.
+  Po indukcijski predpostavki velja $\Gamma \vdash M_1' : B \to A$, iz česar sledi tudi
   $\Gamma \vdash M_1' \, M_2 : A$.
 
 * $V_1 \, M_2 \leadsto V_1 \, M_2'$, mora veljati $M_2 \leadsto M_2'$,
   iz $\Gamma \vdash V_1 \, M_2 : A$ pa sledi
-  $\Gamma \vdash V_1 : B → A$ in $\Gamma \vdash M_2 : B$ za nek $B$.
+  $\Gamma \vdash V_1 : B \to A$ in $\Gamma \vdash M_2 : B$ za nek $B$.
   Po indukcijski predpostavki velja $\Gamma \vdash M_2' : B$, iz česar sledi tudi
   $\Gamma \vdash V \, M_2' : A$.
 
 * $(\lambda x. M) \, V \leadsto M[V / x]$,
   iz $\Gamma \vdash (\lambda x. M) \, V : A$ sledi
-  $\Gamma \vdash (\lambda x. M) : B → A$ in $\Gamma \vdash V : B$ za nek $B$.
+  $\Gamma \vdash (\lambda x. M) : B \to A$ in $\Gamma \vdash V : B$ za nek $B$.
   Iz prvega sledi $\Gamma, x : B \vdash M : A$,
   z drugim pa prek leme o substituciji izpeljemo $\Gamma \vdash M[V / x] : A$.
 
