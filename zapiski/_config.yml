@@ -27,3 +27,5 @@ sphinx:
           "boolty": "\\kwd{bool}"
           "intty": "\\kwd{int}"
           "eqs": "\\mathcal{E}"
+          "ctxt": "\\mathcal{C}"
+          "itp": ["[\\![ #1 ]\\!]", 1]
