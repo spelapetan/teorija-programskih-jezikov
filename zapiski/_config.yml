@@ -29,3 +29,5 @@ sphinx:
           "eqs": "\\mathcal{E}"
           "ctxt": "\\mathcal{C}"
           "itp": ["[\\![ #1 ]\\!]", 1]
+          "return": "\\kwdpre{return}"
+          "letin": ["\\kwdpre{let} #1 \\kwdmid{in}", 1]
