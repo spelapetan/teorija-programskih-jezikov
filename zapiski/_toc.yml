@@ -11,7 +11,6 @@ parts:
   - file: 05-lambda-racun.md
   - file: 06-tipi.md
   - file: 07-izpeljava-tipov.md
-  - file: 08-kontekstna-ekvivalenca.md
 - caption: Denotacijska semantika
   chapters:
   - file: 10-denotacijska-semantika
