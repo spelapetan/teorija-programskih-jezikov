@@ -276,11 +276,11 @@ Z indukcijo na izpeljavo $\Gamma, x : A, \Gamma' \vdash M : B$.
     iz česar sledi $\Gamma, \Gamma' \vdash (M_1 * M_2)[N / x] : \intty$, saj je
     $(M_1 * M_2)[N / x] = M_1[N / x] * M_2[N / x]$.
 
-* $\Gamma, x : A, \Gamma' \vdash M_1 < M_2 : \intty$, mora veljati
+* $\Gamma, x : A, \Gamma' \vdash M_1 < M_2 : \boolty$, mora veljati
     $\Gamma, x : A, \Gamma' \vdash M_1 : \intty$ in $\Gamma, x : A, \Gamma' \vdash M_2 : \intty$.
     Po indukcijski predpostavki zato velja
     $\Gamma, \Gamma' \vdash M_1[N / x] : \intty$ in $\Gamma, \Gamma' \vdash M_2[N / x] : \intty$
-    iz česar sledi $\Gamma, \Gamma' \vdash (M_1 < M_2)[N / x] : \intty$, saj je
+    iz česar sledi $\Gamma, \Gamma' \vdash (M_1 < M_2)[N / x] : \boolty$, saj je
     $(M_1 < M_2)[N / x] = M_1[N / x] < M_2[N / x]$.
 
 * $\Gamma, x : A, \Gamma' \vdash \lambda y. M' : A' \to B'$, mora veljati
@@ -294,7 +294,7 @@ Z indukcijo na izpeljavo $\Gamma, x : A, \Gamma' \vdash M : B$.
     $\Gamma, x : A, \Gamma' \vdash M_1 : A' \to B$ in $\Gamma, x : A, \Gamma' \vdash M_2 : A'$.
     Po indukcijski predpostavki zato velja
     $\Gamma, \Gamma' \vdash M_1[N / x] : A' \to B$ in $\Gamma, \Gamma' \vdash M_2[N / x] : A'$
-    iz česar sledi $\Gamma, \Gamma' \vdash (M_1 \, M_2)[N / x] : \intty$, saj je
+    iz česar sledi $\Gamma, \Gamma' \vdash (M_1 \, M_2)[N / x] : B$, saj je
     $(M_1 \, M_2)[N / x] = M_1[N / x] \, M_2[N / x]$.
 
 ### Trditev (napredek)
@@ -330,8 +330,8 @@ Z indukcijo na predpostavko o določenem tipu.
     Po indukciji za $M_1$ dobimo dva primera:
     1. $M_1$ je vrednost tipa $\intty$, torej število $\intsym{n_1}$. V tem primeru po indukciji za $M_2$ dobimo dva primera:
         1. Tudi $M_2$ je vrednost tipa $ \intty$, torej število $\intsym{n_2}$. Tedaj velja $M_1 + M_2 = \intsym{n_1} + \intsym{n_2} \leadsto \intsym{n_1 + n_2}$.
-        2. Obstaja $M_2'$, da velja $M_2 \leadsto M_2'$, zato velja tudi $M_1 \, M_2 = V_1 \, M_2 \leadsto V_1 \, M_2'$.
-    2. Obstaja $M_1'$, da velja $M_1 \leadsto M_1'$, zato velja tudi $M_1 \, M_2 \leadsto M_1' \, M_2$.
+        2. Obstaja $M_2'$, da velja $M_2 \leadsto M_2'$, zato velja tudi $M_1 + M_2 = \intsym{n_1} + M_2 \leadsto \intsym{n_1} + M_2'$.
+    2. Obstaja $M_1'$, da velja $M_1 \leadsto M_1'$, zato velja tudi $M_1 + M_2 \leadsto M_1' + M_2$.
 
     V vseh primerih izraz torej lahko naredi korak (2).
 
