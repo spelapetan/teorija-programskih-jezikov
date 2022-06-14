@@ -23,7 +23,7 @@ Tako strukturo opisujejo _monade_. Monada je podana s trojico $(T, \eta, \bind)$
 ki zadoščajo zakonom:
 
 - $\eta(x) \bind_{X, Y} k = k(x)$ za poljuben $x \in X$ ter $k : X \to T Y$,
-- $m \bind_{X, X} \eta_Y$ za poljuben $m \in T X$,
+- $m \bind_{X, X} \eta_X = m$ za poljuben $m \in T X$,
 - $(m \bind_{X, Y} k) \bind_{Y, Z} k' = m \bind_{X, Z} (x \mapsto k(x) \bind_{Y, Z} k')$ za poljuben $m \in T X$, $k : X \to T Y$ in $k' : Y \to T Z$.
 
 ## Primeri monad
